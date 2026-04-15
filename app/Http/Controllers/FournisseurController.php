@@ -35,7 +35,7 @@ public function store(Request $request)
 
     Fournisseur::create($request->all());
 
-    return redirect()->route('fournisseur.index')
+    return redirect()->route('dashboard')
         ->with('success', 'Fournisseur ajouté avec succès');
 }
 

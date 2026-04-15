@@ -32,5 +32,5 @@
 </table>
 
 <a href="{{ route('bon_commandes.index') }}" class="btn btn-secondary">Retour</a>
-<a href="{{ route('factures.generate', $bonCommande) }}" class="btn btn-success">Télécharger facture</a>
+<a href="{{ route('bon_commandes.facture', $bonCommande) }}" class="btn btn-success">Télécharger facture</a>
 @endsection

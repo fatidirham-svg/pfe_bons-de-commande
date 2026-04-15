@@ -2,6 +2,8 @@
 
 @section('content')
 
+<div class="container-box">
+
 <h2>Créer Bon de Commande ({{ $type }})</h2>
 
 <form method="POST" action="{{ route('bon_commandes.store') }}">
@@ -9,59 +11,117 @@
 
 <input type="hidden" name="type" value="{{ $type }}">
 
-<div class="row">
+<div class="form-grid">
 
-<div class="col-md-6">
+    <div class="form-group">
+        <label>Date de commande *</label>
+        <input type="date" name="date_commande" required>
+    </div>
 
-<label>Date</label>
-<input type="date" name="date_commande" class="form-control">
+    <div class="form-group">
+        <label>Statut initial *</label>
+        <select name="statut_id" required>
+            <option value="">-- Choisir --</option>
+            @foreach($statuts as $s)
+                <option value="{{ $s->id }}">{{ $s->nom }}</option>
+            @endforeach
+        </select>
+    </div>
 
-<label>Catégorie</label>
-<select name="categorie" class="form-control">
-    <option>Prestations de service</option>
-    <option>Achat matériel</option>
-</select>
+    <div class="form-group">
+        <label>Fournisseur *</label>
+        <select name="fournisseur_id" required>
+            <option value="">-- Choisir --</option>
+            @foreach($fournisseurs as $f)
+                <option value="{{ $f->id }}">{{ $f->nom }}</option>
+            @endforeach
+        </select>
+    </div>
 
-<label>Fournisseur</label>
-<select name="fournisseur_id" class="form-control">
-    @foreach($fournisseurs as $f)
-        <option value="{{ $f->id }}">{{ $f->nom }}</option>
-    @endforeach
-</select>
-
-<label>Mode règlement</label>
-<select name="mode_reglement" class="form-control">
-    <option>1 mois</option>
-    <option>2 mois</option>
-</select>
-
-<label>Observation</label>
-<textarea name="observation" class="form-control"></textarea>
+    <div class="form-group">
+        <label>Mode de règlement *</label>
+        <select name="mode_regelement" required>
+            <option value="">-- Choisir --</option>
+            <option value="1 mois">1 mois</option>
+            <option value="2 mois">2 mois</option>
+        </select>
+    </div>
 
 </div>
 
+<div class="form-group">
+    <label>Observations</label>
+    <textarea name="observations" rows="3" placeholder="Notes internes ou instructions..."></textarea>
 </div>
 
 <hr>
 
-<h4>Produits</h4>
+<h4>Lignes de commande</h4>
 
-<div id="lignes">
+<div id="lines">
 
-<div class="ligne mb-2">
-    <select name="lignes[0][produit_id]">
-        @foreach($produits as $p)
-            <option value="{{ $p->id }}">{{ $p->nom }}</option>
-        @endforeach
-    </select>
+    <div class="line-item">
+        <select name="lignes[0][produit_id]" required>
+            <option value="">Produit</option>
+            @foreach($produits as $p)
+                <option value="{{ $p->id }}">{{ $p->nom }}</option>
+            @endforeach
+        </select>
 
-    <input type="number" name="lignes[0][quantite]" placeholder="Quantité">
+        <input type="number" name="lignes[0][quantite]" value="1" min="1" required>
+
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeLine(this)">🗑</button>
+    </div>
+
 </div>
 
+<!-- ADD BUTTON -->
+<div class="add-line" onclick="addLine()">
+    + Ajouter un produit
 </div>
 
-<button type="submit" class="btn btn-success">Enregistrer</button>
+<!-- FOOTER -->
+<div class="footer-bar">
+    <div class="total">Total TTC: 0 MAD</div>
+
+    <div>
+        <button type="reset" class="btn">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer le BC</button>
+    </div>
+</div>
 
 </form>
+
+</div>
+
+<script>
+let index = 1;
+
+function addLine(){
+    let container = document.getElementById('lines');
+
+    let html = `
+    <div class="line-item">
+        <select name="lignes[${index}][produit_id]" required>
+            <option value="">Produit</option>
+            @foreach($produits as $p)
+                <option value="{{ $p->id }}">{{ $p->nom }}</option>
+            @endforeach
+        </select>
+
+        <input type="number" name="lignes[${index}][quantite]" value="1" min="1" required>
+
+
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeLine(this)">🗑</button>
+    </div>`;
+
+    container.insertAdjacentHTML('beforeend', html);
+    index++;
+}
+
+function removeLine(btn){
+    btn.parentElement.remove();
+}
+</script>
 
 @endsection

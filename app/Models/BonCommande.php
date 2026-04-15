@@ -11,14 +11,14 @@ protected $fillable = [
     'reference',
     'user_id',
     'statut_id',
-    'type',
-    'categorie',
-    'mode_reglement',
-    'observation',
-    'date_commande',
-    'fournisseur_id',
     'total_ht',
-    'total_ttc'
+    'total_ttc',
+    'categorie',
+    'mode_regelement',
+    'observations',
+    'date_commande',
+    'type',
+    'fournisseur_id',
 ];
     public function lignes(){
         return $this->hasMany(Ligne::class);
@@ -36,4 +36,5 @@ protected $fillable = [
 {
     return $this->belongsTo(Fournisseur::class);
 }
+    
 }

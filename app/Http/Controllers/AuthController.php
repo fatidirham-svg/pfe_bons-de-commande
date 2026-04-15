@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\BonCommande;
 class AuthController extends Controller
 {
-    public function showRegister() {
+    public function showRegister()
+    {
         return view('auth.register');
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -22,7 +24,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password), // لازم مشفر
+            'password' => bcrypt($request->password),
             'role' => 'user',
         ]);
 
@@ -31,38 +33,37 @@ class AuthController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function showLogin() {
+    public function showLogin()
+    {
         return view('auth.login');
     }
 
-    public function login(Request $request) {
-        $request->validate([
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
-
-        if(Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'Email ou mot de passe incorrect.'
-        ])->onlyInput('email');
+            'email' => 'Email ou mot de passe incorrect.',
+        ]);
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 
-    // Dashboard
-    public function dashboard() {
-        $user = Auth::user();
-        return view('dashboard', compact('user'));
-    }
+
+
 }

@@ -1,136 +1,298 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestion BC</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<title>CommandFlow</title>
 
-    <style>
-        body {
-            background: #f5f6fa;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: white;
-            position: fixed;
-            padding: 20px;
-            border-right: 1px solid #eee;
-        }
+<style>
+body{
+    margin:0;
+    font-family:'Inter', sans-serif;
+    background:#f6f7fb;
+    display:flex;
+}
 
-        .sidebar h4 {
-            font-weight: bold;
-        }
+/* SIDEBAR */
+.sidebar{
+    width:240px;
+    background:white;
+    height:100vh;
+    padding:20px;
+    border-right:1px solid #eee;
+}
 
-        .sidebar a {
-            display: block;
-            padding: 10px;
-            margin-bottom: 10px;
-            color: #555;
-            text-decoration: none;
-            border-radius: 10px;
-        }
+.logo{
+    font-weight:600;
+    font-size:18px;
+    margin-bottom:30px;
+}
 
-        .sidebar a.active,
-        .sidebar a:hover {
-            background: #6c63ff;
-            color: white;
-        }
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#555;
+    font-size:14px;
+}
 
-        .main {
-            margin-left: 270px;
-            padding: 30px;
-        }
+.menu a.active,
+.menu a:hover{
+    background:#eef2ff;
+    color:#4f46e5;
+}
 
-        .card-box {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
+/* MAIN */
+.main{
+    flex:1;
+}
 
-        .btn-purple {
-            background: #6c63ff;
-            color: white;
-            border-radius: 10px;
-        }
+/* HEADER */
+.header{
+    background:white;
+    padding:15px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #eee;
+}
 
-        .btn-purple:hover {
-            background: #574fd6;
-        }
-    </style>
+.btn{
+    padding:10px 16px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+}
+
+.btn-primary{
+    background:#4f46e5;
+    color:white;
+}
+
+/* CONTENT */
+.container{
+    padding:25px;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.04);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card small{
+    color:#888;
+    font-size:13px;
+}
+
+.card h4{
+    margin-top:6px;
+    font-size:20px;
+}
+
+/* ICON */
+.icon-box{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+}
+
+.blue{background:#eef2ff;color:#4f46e5;}
+.orange{background:#fff7ed;color:#ea580c;}
+.green{background:#ecfdf5;color:#059669;}
+.purple{background:#f5f3ff;color:#7c3aed;}
+
+/* TABLE */
+.table{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+    font-size:12px;
+    color:#888;
+    padding-bottom:10px;
+}
+
+td{
+    padding:12px 0;
+    border-top:1px solid #eee;
+}
+
+/* STATUS */
+.status{
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:500;
+}
+
+.valid{background:#d1fae5;color:#065f46;}
+.pending{background:#fef3c7;color:#92400e;}
+.refuse{background:#fee2e2;color:#991b1b;}
+/* FORM CARD */
+.container-box{
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
+}
+
+/* GRID */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+/* INPUTS */
+.form-group label{
+    font-weight:600;
+    margin-bottom:5px;
+    display:block;
+}
+
+.form-group input,
+.form-group select,
+textarea{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    font-family:inherit;
+}
+
+/* LINE ITEMS */
+.line-item{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr auto;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+/* ADD BUTTON (DASHED) */
+.add-line{
+    margin-top:10px;
+    border:2px dashed #4f46e5;
+    padding:12px;
+    text-align:center;
+    border-radius:10px;
+    color:#4f46e5;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.add-line:hover{
+    background:#eef2ff;
+}
+
+/* FOOTER */
+.footer-bar{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.total{
+    font-weight:600;
+    font-size:16px;
+}
+</style>
 </head>
 
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <h4>📦 Gestion BC</h4>
+    <div class="logo">📦 CommandFlow</div>
 
-    <a href="#" class="active">🏠 Tableau de bord</a>
-    <a href="#">📄 Bons de Commande</a>
-    <a href="#">👤 Clients</a>
-    <a href="#">⚙️ Paramètres</a>
-
-    <hr>
-
-    <form action="{{ route('logout') }}" method="POST">
-        @csrf
-        <button class="btn btn-danger w-100">Déconnexion</button>
-    </form>
+    <div class="menu">
+        <a href="{{'dashboard'}}" class="active">📊 Tableau de bord</a>
+        <a href="{{ route('bon_commandes.index') }}">📄 Bons de commande</a>
+        <a href="{{ route('fournisseurs.create') }}">👤 Fournisseurs</a>
+        <a href="{{ route('produits.create') }}">📦 Produits</a>
+    </div>
 </div>
 
-<!-- Main Content -->
+<!-- MAIN -->
 <div class="main">
 
-    <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3>Tableau de Bord</h3>
-            <p class="text-muted">Bienvenue, voici l'état de vos commandes</p>
-        </div>
+<div class="header">
+    <h3>Bons de Commande</h3>
 
-        <button class="btn btn-purple">
-            + Nouveau Bon de Commande
-        </button>
-    </div>
+    <button class="btn btn-primary" onclick="openModal()">
+        + Nouveau Bon
+    </button>
+</div>
 
-    <!-- Cards -->
-    <div class="row">
+<div class="container">
+    @yield('content')
+</div>
 
-        <div class="col-md-4">
-            <div class="card-box">
-                <h6>Total BC</h6>
-                <h3>128</h3>
-                <span class="text-success">+12%</span>
-            </div>
-        </div>
+<!-- MODAL -->
+<div id="typeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
 
-        <div class="col-md-4">
-            <div class="card-box">
-                <h6>Validés</h6>
-                <h3>84</h3>
-                <span class="text-success">+5%</span>
-            </div>
-        </div>
+    <div style="background:white; width:400px; margin:100px auto; padding:20px; border-radius:10px; text-align:center;">
 
-        <div class="col-md-4">
-            <div class="card-box">
-                <h6>En attente</h6>
-                <h3>44</h3>
-                <span class="text-warning">-2%</span>
-            </div>
-        </div>
+        <h3>Choisir le type</h3>
 
-    </div>
+        <a href="{{ route('bon_commandes.create', ['type'=>'finance']) }}" class="btn btn-primary" style="display:block; margin:10px;">
+            Attijari Finance
+        </a>
 
-    <!-- Content -->
-    <div class="mt-4">
-        @yield('content')
+        <a href="{{ route('bon_commandes.create', ['type'=>'intermediation']) }}" class="btn" style="background:#22c55e;color:white;display:block;margin:10px;">
+            Attijari Intermédiation
+        </a>
+
+        <a href="{{ route('bon_commandes.create', ['type'=>'management']) }}" class="btn" style="background:#111;color:white;display:block;margin:10px;">
+            Attijari Management
+        </a>
+
+        <button onclick="closeModal()" style="margin-top:10px;">Fermer</button>
+
     </div>
 
 </div>
+
+</div>
+
+<script>
+function openModal(){
+    document.getElementById('typeModal').style.display='block';
+}
+function closeModal(){
+    document.getElementById('typeModal').style.display='none';
+}
+</script>
 
 </body>
 </html>
