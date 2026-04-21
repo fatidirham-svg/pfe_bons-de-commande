@@ -2,13 +2,82 @@
 
 @section('content')
 
+<style>
+    .custom-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border-top: 5px solid #E30613;
+    }
+
+    .custom-header {
+        background: white;
+        border-bottom: none;
+    }
+
+    .icon-red {
+        color: #E30613;
+        font-size: 20px;
+    }
+
+    .input-icon {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .input-icon i {
+        color: #888;
+        margin-right: 8px;
+    }
+
+    .input-icon input {
+        border: none;
+        outline: none;
+        width: 100%;
+    }
+
+    .custom-btn {
+        background: #E30613;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        border: none;
+    }
+
+    .custom-btn:hover {
+        background: #c00510;
+    }
+
+    .secure-text {
+        text-align: center;
+        font-size: 12px;
+        color: #888;
+    }
+
+    .secure-text i {
+        color: orange;
+        margin-right: 5px;
+    }
+</style>
+
 <div class="container mt-5" style="max-width:700px">
 
-    <div class="card shadow-lg border-0" style="border-top:5px solid #E30613;">
-        
-        <div class="card-header bg-light">
-            <h3 class="fw-bold text-danger">➕ Ajouter un Fournisseur</h3>
-            <p class="text-muted mb-0">Enregistrez un nouveau partenaire</p>
+    <div class="card custom-card">
+
+        <!-- HEADER -->
+        <div class="card-header custom-header">
+            <div class="d-flex align-items-center gap-3">
+                <i class="fa-solid fa-user-plus icon-red"></i>
+                <div>
+                    <h4 class="fw-bold mb-0">Ajouter un Fournisseur</h4>
+                    <small class="text-muted">Enregistrez un nouveau partenaire</small>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
@@ -26,35 +95,62 @@
             <form action="{{ route('fournisseurs.store') }}" method="POST">
                 @csrf
 
-                <div class="row">
+                <!-- GRID STRUCTURE -->
+                <div class="row g-3">
 
-                    <div class="col-md-6 mb-3">
+                    <!-- NOM -->
+                    <div class="col-md-6">
                         <label class="form-label">Nom *</label>
-                        <input type="text" name="nom" class="form-control" placeholder="SARL Distribution" required>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-building"></i>
+                            <input type="text" name="nom" placeholder="SARL Distribution" required>
+                        </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <!-- EMAIL -->
+                    <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="contact@mail.com">
+                        <div class="input-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" name="email" placeholder="contact@mail.com">
+                        </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <!-- TELEPHONE -->
+                    <div class="col-md-6">
                         <label class="form-label">Téléphone</label>
-                        <input type="text" name="telephone" class="form-control" placeholder="+212...">
+                        <div class="input-icon">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="text" name="telephone" placeholder="+212...">
+                        </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <!-- ADRESSE -->
+                    <div class="col-md-6">
                         <label class="form-label">Adresse</label>
-                        <input type="text" name="adresse" class="form-control" placeholder="Casablanca">
+                        <div class="input-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" name="adresse" placeholder="Casablanca">
+                        </div>
                     </div>
 
                 </div>
 
-                <button class="btn btn-danger w-100 mt-3">
-                    💾 Enregistrer le Fournisseur
-                </button>
+                <!-- BUTTON -->
+                <div class="mt-4">
+                    <button class="btn custom-btn w-100">
+                        <i class="fa-solid fa-floppy-disk me-2"></i>
+                        Enregistrer le Fournisseur
+                    </button>
+                </div>
 
             </form>
+
+            <!-- FOOTER -->
+            <p class="secure-text mt-3">
+                <i class="fa-solid fa-shield-halved"></i>
+                Données sécurisées
+            </p>
 
         </div>
     </div>

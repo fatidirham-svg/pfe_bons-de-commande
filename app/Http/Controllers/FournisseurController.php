@@ -9,10 +9,11 @@ class FournisseurController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+public function index()
+{
+    $fournisseurs = Fournisseur::all();
+    return view('fournisseurs.index', compact('fournisseurs'));
+}
 
     /**
      * Show the form for creating a new resource.
@@ -50,18 +51,33 @@ public function store(Request $request)
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
+public function edit($id)
+{
+    $fournisseur = Fournisseur::findOrFail($id);
+    return view('fournisseurs.edit', compact('fournisseur'));
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'nom' => 'required',
+        'email' => 'nullable|email',
+        'telephone' => 'nullable',
+        'adresse' => 'nullable',
+    ]);
+
+    $fournisseur = Fournisseur::findOrFail($id);
+
+    $fournisseur->update([
+        'nom' => $request->nom,
+        'email' => $request->email,
+        'telephone' => $request->telephone,
+        'adresse' => $request->adresse,
+    ]);
+
+    return redirect()->route('fournisseurs.index')
+        ->with('success', 'Fournisseur modifié avec succès');
+}
 
     /**
      * Remove the specified resource from storage.

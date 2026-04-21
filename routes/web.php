@@ -62,3 +62,16 @@ Route::middleware('auth')->group(function () {
     // ✅ Fournisseurs
     Route::resource('fournisseurs', FournisseurController::class);
 });
+
+
+Route::post('/update-statut', [BonCommandeController::class, 'updateStatut']);
+Route::resource('fournisseur', FournisseurController::class);
+Route::resource('produit', ProduitController::class);
+
+Route::post('/dashboard/update-statut', [DashboardController::class,'updateStatut'])
+    ->name('dashboard.updateStatut');
+
+        // a propos
+        Route::get('/about', function () {
+    return view('about');
+})->name('about');

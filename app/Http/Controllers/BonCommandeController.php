@@ -15,14 +15,21 @@ class BonCommandeController extends Controller
     {
         $query = BonCommande::with(['user','statut','fournisseur']);
 
+        // 🔐 access control
         if (!Auth::user()->isAdmin()) {
             $query->where('user_id', Auth::id());
         }
 
+        // 🔎 filter by fournisseur
         if ($request->fournisseur) {
             $query->whereHas('fournisseur', function($q) use ($request){
-                $q->where('nom', 'like', '%' . $request->fournisseur . '%');
+                $q->where('nom', 'like', '%'.$request->fournisseur.'%');
             });
+        }
+
+        // 🔎 filter by type (NEW ADD)
+        if ($request->type) {
+            $query->where('type', $request->type);
         }
 
         $bons = $query->latest()->get();
@@ -42,8 +49,6 @@ class BonCommandeController extends Controller
 
     public function store(Request $request)
     {
-        // ❌ REMOVE dd() (كان كايوقف الكود)
-
         $request->validate([
             'statut_id' => 'required|exists:statuts,id',
             'fournisseur_id' => 'required|exists:fournisseurs,id',
@@ -52,7 +57,6 @@ class BonCommandeController extends Controller
             'lignes.*.quantite' => 'required|integer|min:1',
         ]);
 
-        // ✅ CREATE BON
         $bon = BonCommande::create([
             'reference' => 'BC-' . time(),
             'user_id' => Auth::id(),
@@ -62,9 +66,7 @@ class BonCommandeController extends Controller
             'categorie' => $request->categorie,
             'fournisseur_id' => $request->fournisseur_id,
 
-            // ⚠️ FIX TYPO
             'mode_regelement' => $request->mode_regelement,
-
             'observations' => $request->observations,
             'type' => $request->type,
 
@@ -160,5 +162,31 @@ class BonCommandeController extends Controller
         $bon->load('lignes.produit','user','statut','fournisseur');
 
         return view('bon_commandes.facture', compact('bon'));
+    }
+
+    // 🔥 DRAG & DROP UPDATE STATUS
+    public function updateStatut(Request $request)
+    {
+        $bon = BonCommande::findOrFail($request->id);
+
+        $statut = Statut::where('nom', $request->statut)->first();
+
+        if ($statut) {
+            $bon->statut_id = $statut->id;
+            $bon->save();
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    // 🔥 OPTIONAL: reorder (kanban position)
+    public function reorder(Request $request)
+    {
+        foreach ($request->order as $item) {
+            BonCommande::where('id', $item['id'])
+                ->update(['position' => $item['position']]);
+        }
+
+        return response()->json(['success' => true]);
     }
 }

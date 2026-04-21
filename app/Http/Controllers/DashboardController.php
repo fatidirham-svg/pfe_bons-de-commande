@@ -1,49 +1,72 @@
 <?php
 
 namespace App\Http\Controllers;
-
+    use Illuminate\Http\Request;
+use App\Models\Statut;
 use App\Models\BonCommande;
 use App\Models\Fournisseur;
-use App\Services\DashboardService;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard', [
-            'totalCommandes' => BonCommande::count(),
-            'enAttente' => BonCommande::whereHas('statut', function ($q) {
-                $q->where('nom', 'En attente');
-            })->count(),
-            'montantTotal' => BonCommande::sum('total_ttc'),
-            'totalFournisseurs' => Fournisseur::count(),
+        $bons = BonCommande::with(['fournisseur','statut','lignes'])
+            ->latest()
+            ->get();
 
-            'bons' => BonCommande::with(['fournisseur', 'statut', 'lignes'])
-                ->latest()
-                ->take(10)
-                ->get(),
+        // Data for charts
+        $chartStatus = [
+            'en_attente' => $bons->where('statut.nom', 'en attente')->count(),
+            'valide' => $bons->where('statut.nom', 'validé')->count(),
+            'annule' => $bons->where('statut.nom', 'annulé')->count(),
+        ];
+
+        $chartType = $bons->groupBy('type')->map->count();
+
+        return view('dashboard', [
+            'totalCommandes' => $bons->count(),
+            'enAttente' => $chartStatus['en_attente'],
+            'montantTotal' => $bons->sum('total_ttc'),
+            'totalFournisseurs' => Fournisseur::count(),
+            'bons' => $bons,
+            'chartStatus' => $chartStatus,
+            'chartType' => $chartType,
         ]);
+
     }
 
-    // ✅ FIX: هادي هي اللي ناقصاك
     public function exportPdf()
     {
-        $data = [
-            'totalCommandes' => BonCommande::count(),
-            'enAttente' => BonCommande::whereHas('statut', function ($q) {
-                $q->where('nom', 'En attente');
-            })->count(),
-            'montantTotal' => BonCommande::sum('total_ttc'),
-            'totalFournisseurs' => Fournisseur::count(),
+        $bons = BonCommande::with(['fournisseur','statut'])->latest()->get();
 
-            'bons' => BonCommande::with(['fournisseur', 'statut'])
-                ->latest()
-                ->get(),
+        $data = [
+            'totalCommandes' => $bons->count(),
+            'enAttente' => $bons->where('statut.nom', 'en attente')->count(),
+            'montantTotal' => $bons->sum('total_ttc'),
+            'totalFournisseurs' => Fournisseur::count(),
+            'bons' => $bons
         ];
 
         $pdf = Pdf::loadView('dashboard.pdf', $data);
 
         return $pdf->download('dashboard.pdf');
     }
+
+
+public function updateStatut(Request $request)
+{
+    $bon = BonCommande::findOrFail($request->id);
+
+    $statut = Statut::where('nom', $request->statut)->first();
+
+    if($statut){
+        $bon->statut_id = $statut->id;
+        $bon->save();
+    }
+
+    return response()->json([
+        'success' => true
+    ]);
+}
 }

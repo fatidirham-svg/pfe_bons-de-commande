@@ -3,10 +3,11 @@ use App\Models\Produit;
 use App\Models\Fournisseur; 
 use Illuminate\Http\Request; 
 class ProduitController extends Controller { 
-    public function index() { 
-        $produits = Produit::latest()->get(); 
-        return view('produits.index', compact('produits')); 
-        } 
+public function index()
+{
+    $produits = Produit::all();
+    return view('produits.index', compact('produits'));
+}
         public function create() {
              $fournisseurs = Fournisseur::all();
               return view('produits.create', compact('fournisseurs'));

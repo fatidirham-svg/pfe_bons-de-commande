@@ -1,173 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <title>Facture</title>
-
+    <meta charset="UTF-8">
+    <title>Rapport d'activité - CommandFlow</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            color: #333;
-        }
+        @page { margin: 1.5cm; }
+        body { font-family: 'Helvetica', sans-serif; font-size: 10px; color: #333; line-height: 1.5; }
+        .header { width: 100%; margin-bottom: 30px; border-bottom: 2px solid #e30613; padding-bottom: 10px; }
+        .logo { width: 180px; }
+        .title { text-align: right; font-size: 16px; font-weight: bold; color: #1a1a1a; vertical-align: bottom; }
+        
+        .stats-table { width: 100%; margin-bottom: 30px; }
+        .stat-card { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; text-align: center; }
+        .stat-value { font-size: 18px; font-weight: bold; color: #e30613; }
+        .stat-label { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #0d3b66;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
+        .main-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .main-table th { background: #1a1a1a; color: white; padding: 8px; font-size: 9px; text-align: left; text-transform: uppercase; }
+        .main-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
+        
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 8px; font-weight: bold; }
+        .badge-pending { background: #ffb71b; color: #000; }
+        .badge-success { background: #e30613; color: #fff; }
+        .badge-danger { background: #1a1a1a; color: #fff; }
 
-        .logo {
-            width: 120px;
-        }
-
-        .company {
-            text-align: right;
-        }
-
-        .company h2 {
-            margin: 0;
-            color: #0d3b66;
-        }
-
-        .invoice-title {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 22px;
-            font-weight: bold;
-            color: #0d3b66;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th {
-            background: #0d3b66;
-            color: white;
-            padding: 10px;
-        }
-
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .totals {
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .totals h3 {
-            margin: 5px 0;
-        }
-
-        .signature {
-            margin-top: 60px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .box {
-            width: 200px;
-            text-align: center;
-        }
-
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 12px;
-            color: #777;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-        }
+        .footer { position: fixed; bottom: -0.5cm; left: 0; right: 0; font-size: 8px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 10px; }
     </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <div>
-    <img src="{{ asset('images/image.png') }}" class="logo" alt="logo">
-    </div>
-
-    <div class="company">
-        <h2>CommandFlow SARL</h2>
-        <p>Casablanca, Maroc</p>
-        <p>Email: contact@company.com</p>
-    </div>
-</div>
-
-<div class="invoice-title">
-    FACTURE BON DE COMMANDE
-</div>
-
-@foreach($bons as $bon)
-
-    <p><strong>Référence:</strong> {{ $bon->reference }}</p>
-    <p><strong>Client:</strong> {{ $bon->user->name }}</p>
-    <p><strong>Statut:</strong> {{ $bon->statut->nom }}</p>
-    <p><strong>Date:</strong> {{ $bon->created_at->format('d/m/Y') }}</p>
-
-    <!-- TABLE -->
-    <table>
-        <thead>
+    <table class="header">
         <tr>
-            <th>Produit</th>
-            <th>Prix Unitaire</th>
-            <th>Quantité</th>
-            <th>Total</th>
+            <td><img src="{{ public_path('images/attijari-logo.png') }}" class="logo"></td>
+            <td class="title">Rapport d'activité - Bons de Commande</td>
         </tr>
-        </thead>
+    </table>
 
-        <tbody>
-        @foreach($bon->lignes as $ligne)
+    <table class="stats-table" cellspacing="10">
+        <tr>
+            <td width="33%">
+                <div class="stat-card">
+                    <div class="stat-value">{{ $totalCommandes }}</div>
+                    <div class="stat-label">Total Commandes</div>
+                </div>
+            </td>
+            <td width="33%">
+                <div class="stat-card">
+                    <div class="stat-value">{{ $enAttente }}</div>
+                    <div class="stat-label">En Attente</div>
+                </div>
+            </td>
+            <td width="33%">
+                <div class="stat-card">
+                    <div class="stat-value">{{ number_format($montantTotal, 0, ',', ' ') }} DH</div>
+                    <div class="stat-label">Montant Global</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <h3 style="font-size: 12px; margin-bottom: 10px;">Liste des Commandes Récentes</h3>
+    <table class="main-table">
+        <thead>
             <tr>
-                <td>{{ $ligne->produit->nom }}</td>
-                <td>{{ number_format($ligne->prix_unitaire, 2) }} DH</td>
-                <td>{{ $ligne->quantite }}</td>
-                <td>{{ number_format($ligne->total, 2) }} DH</td>
+                <th>Référence</th>
+                <th>Fournisseur</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Total TTC</th>
+                <th>Date</th>
             </tr>
-        @endforeach
+        </thead>
+        <tbody>
+            @foreach($bons as $bon)
+            <tr>
+                <td style="font-weight: bold;">{{ $bon->reference }}</td>
+                <td>{{ $bon->fournisseur->nom ?? '-' }}</td>
+                <td>{{ ucfirst($bon->type) }}</td>
+                <td>
+                    @php
+                        $badge = match($bon->statut->nom) {
+                            'en attente' => 'badge-pending',
+                            'validé' => 'badge-success',
+                            'annulé' => 'badge-danger',
+                            default => ''
+                        };
+                    @endphp
+                    <span class="badge {{ $badge }}">{{ ucfirst($bon->statut->nom) }}</span>
+                </td>
+                <td style="font-weight: bold; color: #e30613;">{{ number_format($bon->total_ttc, 2, ',', ' ') }} DH</td>
+                <td>{{ $bon->created_at->format('d/m/Y') }}</td>
+            </tr>
+            @endforeach
         </tbody>
     </table>
 
-    <!-- TOTAL -->
-    <div class="totals">
-        <h3>Total HT: {{ number_format($bon->total_ht, 2) }} DH</h3>
-        <h3>Total TTC (20% TVA): {{ number_format($bon->total_ttc, 2) }} DH</h3>
+    <div class="footer">
+        CommandFlow v2.0 - Généré le {{ date('d/m/Y H:i') }} - © Attijariwafa Bank
     </div>
-
-    <hr style="margin:30px 0;">
-
-@endforeach
-
-<!-- SIGNATURE -->
-<div class="signature">
-    <div class="box">
-        <p>Signature Client</p>
-        <br><br>
-        ____________
-    </div>
-
-    <div class="box">
-        <p>Signature Société</p>
-        <br><br>
-        ____________
-    </div>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-    Merci pour votre confiance — CommandFlow © {{ date('Y') }}
-</div>
 
 </body>
 </html>

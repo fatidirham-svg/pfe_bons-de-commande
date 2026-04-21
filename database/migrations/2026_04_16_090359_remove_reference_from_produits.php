@@ -12,14 +12,14 @@ return new class extends Migration
 public function up(): void
 {
     Schema::table('produits', function (Blueprint $table) {
-       $table->string('reference')->nullable();
+        $table->dropColumn('reference');
     });
 }
 
 public function down(): void
 {
     Schema::table('produits', function (Blueprint $table) {
-        $table->dropColumn('reference');
+        $table->string('reference')->nullable();
     });
 }
 };
