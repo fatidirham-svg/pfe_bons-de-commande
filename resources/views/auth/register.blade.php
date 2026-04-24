@@ -110,13 +110,13 @@ button:hover {
 
 <!-- LEFT -->
 <div class="left">
-    <img src="{{ asset('images/bank-illustration.png') }}" alt="bank">
+    <img src="{{ asset('images/attijari-logo.png') }}" alt="bank">
 
     <h1>Bienvenue chez <span>Attijariwafa Bank</span></h1>
 
     <p>
         Accédez à une plateforme sécurisée dédiée à la gestion de vos opérations.
-        Suivez vos bons de commande, gérez vos transactions et bénéficiez d’un environnement fiable,
+        Suivez vos bons de commande, gérez vos transactions et bénéficiez d'un environnement fiable,
         conçu pour répondre aux exigences des professionnels.
     </p>
 </div>

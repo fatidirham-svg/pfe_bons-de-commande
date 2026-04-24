@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     // ✅ Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/export-pdf', [DashboardController::class, 'exportPdf'])->name('dashboard.pdf');
+    Route::post('/dashboard/generate-pdf', [DashboardController::class, 'generatePdf'])->name('dashboard.generatePdf');
 
     // ✅ Choose type (IMPORTANT)
     Route::get('/bon_commandes/choose-type', function () {

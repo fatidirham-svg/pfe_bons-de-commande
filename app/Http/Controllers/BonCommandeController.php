@@ -117,7 +117,9 @@ class BonCommandeController extends Controller
 
         return view('bon_commandes.edit', [
             'bonCommande' => $bonCommande,
-            'statuts' => Statut::all()
+            'statuts' => Statut::all(),
+            'fournisseurs' => Fournisseur::all(),
+            'produits' => Produit::all()
         ]);
     }
 
@@ -127,14 +129,51 @@ class BonCommandeController extends Controller
 
         $request->validate([
             'statut_id' => 'required|exists:statuts,id',
+            'fournisseur_id' => 'required|exists:fournisseurs,id',
+            'date_commande' => 'required|date',
+            'categorie' => 'nullable|string|max:255',
+            'mode_regelement' => 'required|string|max:50',
+            'observations' => 'nullable|string',
+            'lignes' => 'required|array|min:1',
+            'lignes.*.produit_id' => 'required|exists:produits,id',
+            'lignes.*.quantite' => 'required|integer|min:1',
         ]);
 
         $bonCommande->update([
             'statut_id' => $request->statut_id,
+            'fournisseur_id' => $request->fournisseur_id,
+            'date_commande' => $request->date_commande,
+            'categorie' => $request->categorie,
+            'mode_regelement' => $request->mode_regelement,
+            'observations' => $request->observations,
+        ]);
+
+        $bonCommande->lignes()->delete();
+        $totalHT = 0;
+
+        foreach ($request->lignes as $ligne) {
+            $produit = Produit::find($ligne['produit_id']);
+            if (!$produit) {
+                continue;
+            }
+
+            $total = $ligne['quantite'] * $produit->prix;
+            $bonCommande->lignes()->create([
+                'produit_id' => $produit->id,
+                'quantite' => $ligne['quantite'],
+                'prix_unitaire' => $produit->prix,
+                'total' => $total,
+            ]);
+            $totalHT += $total;
+        }
+
+        $bonCommande->update([
+            'total_ht' => $totalHT,
+            'total_ttc' => $totalHT * 1.2,
         ]);
 
         return redirect()->route('bon_commandes.index')
-            ->with('success', 'Statut mis à jour');
+            ->with('success', 'Bon de commande mis à jour');
     }
 
     public function destroy(BonCommande $bonCommande)

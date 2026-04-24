@@ -17,10 +17,9 @@
                 <label class="form-label fw-bold text-secondary small">Type de Bon</label>
                 <select name="type" class="form-select rounded-pill px-3">
                     <option value="">Tous les types</option>
-                    <option value="Nouveau" {{ request('type')=='Nouveau' ? 'selected' : '' }}>Nouveau</option>
-                    <option value="Attijari Finance" {{ request('type')=='Attijari Finance' ? 'selected' : '' }}>Attijari Finance</option>
-                    <option value="Attijari Intermédiation" {{ request('type')=='Attijari Intermédiation' ? 'selected' : '' }}>Attijari Intermédiation</option>
-                    <option value="Attijari Management" {{ request('type')=='Attijari Management' ? 'selected' : '' }}>Attijari Management</option>
+                    <option value="finance" {{ request('type')=='finance' ? 'selected' : '' }}>Attijari Finance</option>
+                    <option value="intermediation" {{ request('type')=='intermediation' ? 'selected' : '' }}>Attijari Intermédiation</option>
+                    <option value="management" {{ request('type')=='management' ? 'selected' : '' }}>Attijari Management</option>
                 </select>
             </div>
 
@@ -64,7 +63,21 @@
                         </div>
                     </td>
                     <td class="small">{{ $bon->fournisseur->nom ?? '-' }}</td>
-                    <td><span class="badge bg-light text-muted fw-bold border">{{ $bon->type }}</span></td>
+                    @php
+                        $typeLabel = match($bon->type) {
+                            'finance' => 'Attijari Finance',
+                            'intermediation' => 'Attijari Intermédiation',
+                            'management' => 'Attijari Management',
+                            default => ucfirst($bon->type)
+                        };
+                        $typeBg = match($bon->type) {
+                            'finance' => 'background: linear-gradient(135deg, #fff3cd, #ffeaa7); color: #856404; border: 1px solid #ffc107;',
+                            'intermediation' => 'background: linear-gradient(135deg, #d4edda, #a8e6cf); color: #155724; border: 1px solid #28a745;',
+                            'management' => 'background: linear-gradient(135deg, #e2e8f0, #cbd5e1); color: #1a1a1a; border: 1px solid #94a3b8;',
+                            default => 'background: #f1f5f9; color: #64748b;'
+                        };
+                    @endphp
+                    <td><span class="badge fw-bold px-3 py-2 rounded-pill" style="{{ $typeBg }}">{{ $typeLabel }}</span></td>
                     <td>
                         @php
                             $statusInfo = match($bon->statut->nom) {
@@ -117,4 +130,4 @@
 </div>
 
 @endsection
-ndsection
+ndsection

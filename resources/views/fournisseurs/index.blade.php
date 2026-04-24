@@ -5,10 +5,10 @@
 <div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>📦 Liste des Fournisseurs</h3>
+        <h3> Liste des Fournisseurs</h3>
 
         <a href="{{ route('fournisseur.create') }}" class="btn btn-danger">
-            + Ajouter Fournisseur
+            Ajouter Fournisseur
         </a>
     </div>
 

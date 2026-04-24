@@ -5,7 +5,7 @@
 <div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>📦 Liste des Produits</h3>
+        <h3> Liste des Produits</h3>
 
         <a href="{{ route('produit.create') }}" class="btn btn-danger">
             + Ajouter Produit

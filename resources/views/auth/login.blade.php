@@ -236,6 +236,11 @@
                 <button type="submit" class="btn-submit">
                     Se connecter
                 </button>
+                <button type="button" class="btn-submit" style="background: transparent; color: var(--tijari-red); margin-top: 12px; box-shadow: none;">
+                        Pas de compte ? <a href="{{ route('register') }}">Créer un compte</a>
+                </button>
+              
+
             </form>
 
             <p class="footer-text">

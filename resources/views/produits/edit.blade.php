@@ -3,7 +3,7 @@
 @section('content')
 
 <style>
-    /* ===== TIJARI THEME - FORMULAIRE MODIFICATION FOURNISSEUR ===== */
+    /* ===== TIJARI THEME - FORMULAIRE MODIFICATION PRODUIT ===== */
 
     /* Variables Tijari */
     :root {
@@ -102,6 +102,52 @@
         transform: translateY(-1px);
     }
 
+    .tijari-textarea {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+        background: #ffffff;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        outline: none;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .tijari-textarea:focus {
+        border-color: var(--tijari-red);
+        box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
+        background: #fefefe;
+        transform: translateY(-1px);
+    }
+
+    .tijari-select {
+        width: 100%;
+        padding: 14px 16px 14px 50px;
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+        background: #ffffff;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+    }
+
+    .tijari-select:focus {
+        border-color: var(--tijari-red);
+        box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
+        background: #fefefe;
+        transform: translateY(-1px);
+    }
+
     .tijari-input-icon {
         position: absolute;
         left: 16px;
@@ -113,7 +159,8 @@
         pointer-events: none;
     }
 
-    .tijari-input:focus + .tijari-input-icon {
+    .tijari-input:focus + .tijari-input-icon,
+    .tijari-select:focus + .tijari-input-icon {
         color: var(--tijari-yellow);
         animation: bounce 0.6s ease;
     }
@@ -239,6 +286,24 @@
         margin-right: 8px;
     }
 
+    /* Badge fournisseur */
+    .supplier-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+        color: #2e7d32;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid #c8e6c9;
+    }
+
+    .supplier-badge i {
+        font-size: 11px;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .container {
@@ -253,7 +318,9 @@
             padding: 20px 0;
         }
 
-        .tijari-input {
+        .tijari-input,
+        .tijari-textarea,
+        .tijari-select {
             padding-left: 45px;
             font-size: 16px; /* Prevent zoom on iOS */
         }
@@ -286,10 +353,10 @@
                 <i class="fa-solid fa-edit tijari-icon"></i>
                 <div class="text-center">
                     <h3 class="fw-bold mb-1" style="color: var(--tijari-dark); font-size: 24px;">
-                        Modifier le Fournisseur
+                        Modifier le Produit
                     </h3>
                     <p class="text-muted mb-0" style="font-size: 14px;">
-                        Mettez à jour les informations du fournisseur
+                        Mettez à jour les informations du produit
                     </p>
                 </div>
             </div>
@@ -301,8 +368,9 @@
             {{-- Section informative --}}
             <div class="info-section">
                 <i class="fa-solid fa-info-circle"></i>
-                <strong>Modification :</strong> Vous êtes en train de modifier les informations de
-                <strong>{{ $fournisseur->nom }}</strong>. Assurez-vous que toutes les données sont correctes.
+                <strong>Modification :</strong> Vous êtes en train de modifier
+                <strong>"{{ $produit->nom }}"</strong>.
+                Le prix actuel est de <strong>{{ number_format($produit->prix, 2) }} DH</strong>.
             </div>
 
             {{-- Affichage des erreurs --}}
@@ -321,28 +389,28 @@
             @endif
 
             {{-- Formulaire --}}
-            <form action="{{ route('fournisseurs.update', $fournisseur->id) }}" method="POST" novalidate>
+            <form action="{{ route('produits.update', $produit->id) }}" method="POST" novalidate>
                 @csrf
                 @method('PUT')
 
                 <div class="row g-4">
 
-                    <!-- NOM (Obligatoire) -->
+                    <!-- NOM DU PRODUIT (Obligatoire) -->
                     <div class="col-12">
                         <label class="tijari-label">
-                            <i class="fa-solid fa-briefcase"></i>
-                            Nom de l'entreprise
+                            <i class="fa-solid fa-tag"></i>
+                            Nom du produit
                             <span class="required-star">*</span>
                         </label>
                         <div class="tijari-input-group">
                             <input type="text"
                                    name="nom"
                                    class="tijari-input"
-                                   placeholder="SARL Distribution Tijari"
-                                   value="{{ old('nom', $fournisseur->nom) }}"
+                                   placeholder="Ex: Clavier USB Gaming RGB"
+                                   value="{{ old('nom', $produit->nom) }}"
                                    required
-                                   autocomplete="organization">
-                            <i class="fa-solid fa-building tijari-input-icon"></i>
+                                   autocomplete="off">
+                            <i class="fa-solid fa-box tijari-input-icon"></i>
                         </div>
                         @error('nom')
                             <div class="text-danger mt-1" style="font-size: 13px;">
@@ -351,77 +419,88 @@
                         @enderror
                     </div>
 
-                    <!-- EMAIL -->
-                    <div class="col-md-6">
-                        <label class="tijari-label">
-                            <i class="fa-solid fa-envelope"></i>
-                            Email de contact
-                        </label>
-                        <div class="tijari-input-group">
-                            <input type="email"
-                                   name="email"
-                                   class="tijari-input"
-                                   placeholder="contact@fournisseur.com"
-                                   value="{{ old('email', $fournisseur->email) }}"
-                                   autocomplete="email">
-                            <i class="fa-solid fa-envelope tijari-input-icon"></i>
-                        </div>
-                        @error('email')
-                            <div class="text-danger mt-1" style="font-size: 13px;">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <!-- TÉLÉPHONE -->
-                    <div class="col-md-6">
-                        <label class="tijari-label">
-                            <i class="fa-solid fa-phone"></i>
-                            Numéro de téléphone
-                        </label>
-                        <div class="tijari-input-group">
-                            <input type="tel"
-                                   name="telephone"
-                                   class="tijari-input"
-                                   placeholder="+212 6XX XXX XXX"
-                                   value="{{ old('telephone', $fournisseur->telephone) }}"
-                                   autocomplete="tel">
-                            <i class="fa-solid fa-phone tijari-input-icon"></i>
-                        </div>
-                        @error('telephone')
-                            <div class="text-danger mt-1" style="font-size: 13px;">
-                                <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <!-- ADRESSE -->
+                    <!-- DESCRIPTION -->
                     <div class="col-12">
                         <label class="tijari-label">
-                            <i class="fa-solid fa-location-dot"></i>
-                            Adresse complète
+                            <i class="fa-solid fa-align-left"></i>
+                            Description détaillée
                         </label>
-                        <div class="tijari-input-group">
-                            <input type="text"
-                                   name="adresse"
-                                   class="tijari-input"
-                                   placeholder="Rue, Ville, Code postal"
-                                   value="{{ old('adresse', $fournisseur->adresse) }}"
-                                   autocomplete="address-line1">
-                            <i class="fa-solid fa-location-dot tijari-input-icon"></i>
-                        </div>
-                        @error('adresse')
+                        <textarea name="description"
+                                  class="tijari-textarea"
+                                  placeholder="Décrivez les caractéristiques du produit, dimensions, spécifications techniques..."
+                                  autocomplete="off">{{ old('description', $produit->description) }}</textarea>
+                        @error('description')
                             <div class="text-danger mt-1" style="font-size: 13px;">
                                 <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
                             </div>
                         @enderror
+                    </div>
+
+                    <!-- PRIX UNITAIRE (Obligatoire) -->
+                    <div class="col-md-6">
+                        <label class="tijari-label">
+                            <i class="fa-solid fa-coins"></i>
+                            Prix unitaire (DH)
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="tijari-input-group">
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="prix"
+                                   class="tijari-input"
+                                   placeholder="0.00"
+                                   value="{{ old('prix', $produit->prix) }}"
+                                   required>
+                            <i class="fa-solid fa-coins tijari-input-icon"></i>
+                        </div>
+                        @error('prix')
+                            <div class="text-danger mt-1" style="font-size: 13px;">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <!-- FOURNISSEUR (Obligatoire) -->
+                    <div class="col-md-6">
+                        <label class="tijari-label">
+                            <i class="fa-solid fa-building"></i>
+                            Fournisseur
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="tijari-input-group">
+                            <select name="fournisseur_id" class="tijari-select" required>
+                                <option value="">-- Sélectionnez un fournisseur --</option>
+                                @foreach($fournisseurs as $fournisseur)
+                                    <option value="{{ $fournisseur->id }}"
+                                            {{ old('fournisseur_id', $produit->fournisseur_id) == $fournisseur->id ? 'selected' : '' }}>
+                                        {{ $fournisseur->nom }}
+                                        @if($fournisseur->email)
+                                            ({{ $fournisseur->email }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            <i class="fa-solid fa-building tijari-input-icon"></i>
+                        </div>
+                        @error('fournisseur_id')
+                            <div class="text-danger mt-1" style="font-size: 13px;">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}
+                            </div>
+                        @enderror
+
+                        {{-- Affichage du fournisseur actuel --}}
+                        <div class="supplier-badge mt-2">
+                            <i class="fa-solid fa-info-circle"></i>
+                            Fournisseur actuel: <strong>{{ $produit->fournisseur->nom }}</strong>
+                        </div>
                     </div>
 
                 </div>
 
                 <!-- BOUTONS D'ACTION -->
                 <div class="d-flex gap-3 justify-content-center mt-4">
-                    <a href="{{ route('fournisseurs.index') }}" class="tijari-btn-secondary">
+                    <a href="{{ route('produits.index') }}" class="tijari-btn-secondary">
                         <i class="fa-solid fa-arrow-left me-2"></i>
                         Annuler
                     </a>

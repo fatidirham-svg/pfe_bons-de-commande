@@ -137,7 +137,7 @@
         data: {
             labels: ['En Attente', 'Validé', 'Annulé'],
             datasets: [{
-                data: [{{ $chartStatus['en_attente'] }}, {{ $chartStatus['valide'] }}, {{ $chartStatus['annule'] }}],
+                data: [{{ $chartStatus['en attente'] }}, {{ $chartStatus['validé'] }}, {{ $chartStatus['annulé'] }}],
                 backgroundColor: ['#ffb71b', '#e30613', '#1a1a1a'],
                 borderWidth: 0,
                 hoverOffset: 15
@@ -207,4 +207,4 @@
     });
 </script>
 @endsection
-
+

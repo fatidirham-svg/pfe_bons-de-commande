@@ -254,7 +254,7 @@
         <img src="{{ asset('images/attijari-logo.png') }}" alt="Tijari Logo">
         <div class="nav-links">
             <a href="#features">Fonctionnalités</a>
-            <a href="#about">À propos</a>
+            <a href="/about">À propos</a>
             <a href="{{ route('login') }}" class="btn-login">Accès Client</a>
         </div>
     </nav>

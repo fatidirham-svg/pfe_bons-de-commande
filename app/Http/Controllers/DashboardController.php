@@ -36,21 +36,50 @@ class DashboardController extends Controller
 
     }
 
-    public function exportPdf()
+    public function exportPdf(Request $request)
     {
-        $bons = BonCommande::with(['fournisseur','statut'])->latest()->get();
+        $id = $request->query('id');
 
-        $data = [
-            'totalCommandes' => $bons->count(),
-            'enAttente' => $bons->where('statut.nom', 'en attente')->count(),
-            'montantTotal' => $bons->sum('total_ttc'),
-            'totalFournisseurs' => Fournisseur::count(),
-            'bons' => $bons
+        if ($id) {
+            $bon = BonCommande::with(['fournisseur', 'statut', 'lignes.produit'])->findOrFail($id);
+        } else {
+            $bon = BonCommande::with(['fournisseur', 'statut', 'lignes.produit'])->latest()->firstOrFail();
+        }
+
+        return view('dashboard.facture-config', compact('bon'));
+    }
+
+    public function generatePdf(Request $request)
+    {
+        $request->validate([
+            'bon_id' => 'required|exists:bon_commandes,id',
+            'societe' => 'required|string',
+            'societe_autre' => 'nullable|string',
+            'signataire1_nom' => 'required|string|max:255',
+            'signataire1_poste' => 'required|string|max:255',
+            'signataire2_nom' => 'required|string|max:255',
+            'signataire2_poste' => 'required|string|max:255',
+        ]);
+
+        $bon = BonCommande::with(['fournisseur', 'statut', 'lignes.produit'])->findOrFail($request->bon_id);
+
+        // Préparer les données pour le PDF
+        $pdfData = [
+            'bon' => $bon,
+            'societe' => $request->societe === 'Autre' ? $request->societe_autre : $request->societe,
+            'signataire1' => [
+                'nom' => $request->signataire1_nom,
+                'poste' => $request->signataire1_poste,
+            ],
+            'signataire2' => [
+                'nom' => $request->signataire2_nom,
+                'poste' => $request->signataire2_poste,
+            ],
         ];
 
-        $pdf = Pdf::loadView('dashboard.pdf', $data);
+        $pdf = Pdf::loadView('dashboard.pdf', $pdfData);
 
-        return $pdf->download('dashboard.pdf');
+        return $pdf->download('facture-' . $bon->reference . '.pdf');
     }
 
 
